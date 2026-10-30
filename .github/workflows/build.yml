@@ -6,6 +6,9 @@ on:
     branches: [main]
     tags: ["v*"]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -41,5 +44,15 @@ jobs:
         with:
           name: KinDesk_v${{ steps.ver.outputs.version }}
           path: |
+            dist/KinDesk.exe
+            installer/Output/*.exe
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: KinDesk ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
             dist/KinDesk.exe
             installer/Output/*.exe
